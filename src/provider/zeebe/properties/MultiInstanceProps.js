@@ -2,7 +2,10 @@ import {
   getBusinessObject
 } from 'bpmn-js/lib/util/ModelUtil';
 
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import {
+  TextFieldEntry, isTextFieldEntryEdited,
+  FeelEntry, isFeelEntryEdited
+} from '@bpmn-io/properties-panel';
 
 import {
   getPath,
@@ -37,7 +40,7 @@ export function MultiInstanceProps(props) {
     {
       id: 'multiInstance-inputCollection',
       component: InputCollection,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     },
     {
       id: 'multiInstance-inputElement',
@@ -52,12 +55,12 @@ export function MultiInstanceProps(props) {
     {
       id: 'multiInstance-outputElement',
       component: OutputElement,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     },
     {
       id: 'multiInstance-completionCondition',
       component: CompletionCondition,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     }
   ];
 }
@@ -98,7 +101,7 @@ function InputCollection(props) {
       || (type === 'extensionElementRequired' && requiredExtensionElement === 'zeebe:LoopCharacteristics');
   });
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id: 'multiInstance-inputCollection',
     label: translate('Input collection'),
@@ -201,7 +204,7 @@ function OutputElement(props) {
 
   const show = useShowCallback(businessObject, path);
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id: 'multiInstance-outputElement',
     label: translate('Output element'),
@@ -243,7 +246,7 @@ function CompletionCondition(props) {
     }
   };
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id: 'multiInstance-completionCondition',
     label: translate('Completion condition'),

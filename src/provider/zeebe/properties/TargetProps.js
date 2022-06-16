@@ -3,7 +3,9 @@ import {
   is
 } from 'bpmn-js/lib/util/ModelUtil';
 
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import {
+  FeelEntry, isFeelEntryEdited
+} from '@bpmn-io/properties-panel';
 
 import {
   getPath,
@@ -39,7 +41,7 @@ export function TargetProps(props) {
     {
       id: 'targetProcessId',
       component: TargetProcessId,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     }
   ];
 }
@@ -141,7 +143,7 @@ function TargetProcessId(props) {
       || (type === 'extensionElementRequired' && requiredExtensionElement === 'zeebe:CalledElement');
   });
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id,
     label: translate('Process ID'),

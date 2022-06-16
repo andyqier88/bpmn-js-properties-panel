@@ -167,3 +167,14 @@ function propertiesPanelSatisfies(versionRange) {
 
   return semver.satisfies(version, versionRange, { includePrerelease: true });
 }
+
+
+
+export async function setEditorValue(editor, value) {
+  await act(() => {
+    editor.textContent = value;
+  });
+
+  // Requires 2 ticks to propagate the change to bpmn-js
+  await act(() => {});
+}

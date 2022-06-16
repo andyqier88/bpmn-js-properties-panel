@@ -2,7 +2,8 @@ import {
   is
 } from 'bpmn-js/lib/util/ModelUtil';
 
-import { TextFieldEntry } from '@bpmn-io/properties-panel';
+import { TextFieldEntry,
+  FeelEntry, isFeelEntryEdited } from '@bpmn-io/properties-panel';
 
 import {
   useService
@@ -19,11 +20,13 @@ export default function InputOutputParameter(props) {
   const entries = [ {
     id: idPrefix + '-target',
     component: TargetProperty,
+    isEdited: isFeelEntryEdited,
     idPrefix,
     parameter
   },{
     id: idPrefix + '-source',
     component: SourceProperty,
+    isEdited: isFeelEntryEdited,
     idPrefix,
     parameter
   } ];
@@ -91,7 +94,8 @@ function SourceProperty(props) {
     return parameter.source;
   };
 
-  return TextFieldEntry({
+  return FeelEntry({
+    bpmnElement: element,
     element: parameter,
     id: idPrefix + '-source',
     label: translate('Variable assignment value'),

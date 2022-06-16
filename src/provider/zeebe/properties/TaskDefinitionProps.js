@@ -2,7 +2,7 @@ import {
   getBusinessObject
 } from 'bpmn-js/lib/util/ModelUtil';
 
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { FeelEntry, isFeelEntryEdited } from '@bpmn-io/properties-panel';
 
 import {
   getPath,
@@ -41,12 +41,12 @@ export function TaskDefinitionProps(props) {
     {
       id: 'taskDefinitionType',
       component: TaskDefinitionType,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     },
     {
       id: 'taskDefinitionRetries',
       component: TaskDefinitionRetries,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     }
   ];
 }
@@ -146,7 +146,7 @@ function TaskDefinitionType(props) {
       || (type === 'extensionElementRequired' && requiredExtensionElement === 'zeebe:TaskDefinition');
   });
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id,
     label: translate('Type'),
@@ -242,7 +242,7 @@ function TaskDefinitionRetries(props) {
 
   const show = useShowCallback(businessObject, path);
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id,
     label: translate('Retries'),

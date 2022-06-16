@@ -3,7 +3,10 @@ import {
   is
 } from 'bpmn-js/lib/util/ModelUtil';
 
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import {
+  TextFieldEntry, isTextFieldEntryEdited,
+  FeelEntry, isFeelEntryEdited
+} from '@bpmn-io/properties-panel';
 
 import {
   getPath,
@@ -37,7 +40,7 @@ export function CalledDecisionProps(props) {
     {
       id: 'decisionId',
       component: DecisionID,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     },
     {
       id: 'resultVariable',
@@ -132,7 +135,7 @@ function DecisionID(props) {
 
   const show = useShowCallback(businessObject, path);
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id,
     label: translate('Decision ID'),

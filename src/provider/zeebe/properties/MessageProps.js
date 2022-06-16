@@ -7,7 +7,9 @@ import {
   isEventSubProcess
 } from 'bpmn-js/lib/util/DiUtil';
 
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import {
+  FeelEntry, isFeelEntryEdited
+} from '@bpmn-io/properties-panel';
 
 import {
   getPath,
@@ -47,7 +49,7 @@ export function MessageProps(props) {
       {
         id: 'messageName',
         component: MessageName,
-        isEdited: isTextFieldEntryEdited
+        isEdited: isFeelEntryEdited
       }
     );
   }
@@ -56,7 +58,7 @@ export function MessageProps(props) {
     entries.push({
       id: 'messageSubscriptionCorrelationKey',
       component: SubscriptionCorrelationKey,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isFeelEntryEdited
     });
   }
 
@@ -95,7 +97,7 @@ function MessageName(props) {
 
   const show = useShowCallback(businessObject, path);
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id: 'messageName',
     label: translate('Name'),
@@ -193,7 +195,7 @@ function SubscriptionCorrelationKey(props) {
       || (error.type === 'extensionElementRequired' && error.requiredExtensionElement === 'zeebe:Subscription');
   });
 
-  return TextFieldEntry({
+  return FeelEntry({
     element,
     id: 'messageSubscriptionCorrelationKey',
     label: translate('Subscription correlation key'),
