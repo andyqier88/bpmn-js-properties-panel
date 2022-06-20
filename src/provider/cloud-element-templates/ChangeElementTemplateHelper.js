@@ -5,7 +5,7 @@ import {
 
 import {
   findExtension
-} from '../Helper';
+} from './Helper';
 
 import {
   createInputParameter,
@@ -13,7 +13,7 @@ import {
   createTaskDefinitionWithType,
   createTaskHeader,
   shouldUpdate
-} from '../CreateHelper';
+} from './CreateHelper';
 
 import {
   find,
@@ -21,49 +21,28 @@ import {
   without
 } from 'min-dash';
 
-/**
- * Applies an element template to an element. Sets `zeebe:modelerTemplate` and
- * `zeebe:modelerTemplateVersion`.
- */
-export default class ChangeElementTemplateHandler {
-  constructor(bpmnFactory, bpmnReplace, commandStack, modeling, changeElementTemplateHelper) {
+export default class ChangeElementTemplateHelper {
+  constructor(bpmnFactory, bpmnReplace, commandStack, modeling) {
     this._bpmnFactory = bpmnFactory;
     this._bpmnReplace = bpmnReplace;
     this._commandStack = commandStack;
     this._modeling = modeling;
-    this.helper = changeElementTemplateHelper;
   }
 
-  /**
-   * Change an element's template and update its properties as specified in `newTemplate`. Specify
-   * `oldTemplate` to update from one template to another. If `newTemplate` isn't specified the
-   * `zeebe:modelerTemplate` and `zeebe:modelerTemplateVersion` properties will be removed from
-   * the element.
-   *
-   * @param {Object} context
-   * @param {Object} context.element
-   * @param {Object} [context.oldTemplate]
-   * @param {Object} [context.newTemplate]
-   */
-  preExecute(context) {
-    const newTemplate = context.newTemplate,
-          oldTemplate = context.oldTemplate;
+  updateTemplateProperties(element, oldTemplate, newTemplate, options = {}) {
 
-    let element = context.element;
+    // update properties
+    this._updateProperties(element, oldTemplate, newTemplate, options);
 
-    // update zeebe:modelerTemplate attribute
-    this._updateZeebeModelerTemplate(element, newTemplate);
+    // update zeebe:TaskDefinition
 
-    // update zeebe:modelerTemplateIcon
-    this._updateZeebeModelerTemplateIcon(element, newTemplate);
+    this._updateZeebeInputOutputParameterProperties(element, oldTemplate, newTemplate, options);
 
-    if (newTemplate) {
+    // update zeebe:Input and zeebe:Output properties
+    this._updateZeebeTaskDefinition(element, oldTemplate, newTemplate, options);
 
-      // update task type
-      element = context.element = this._updateTaskType(element, newTemplate);
-
-      this.helper.updateTemplateProperties(element, oldTemplate, newTemplate);
-    }
+    // update zeebe:Header properties
+    this._updateZeebeTaskHeaderProperties(element, oldTemplate, newTemplate, options);
   }
 
   _getOrCreateExtensionElements(element) {
@@ -89,27 +68,7 @@ export default class ChangeElementTemplateHandler {
     return extensionElements;
   }
 
-  _updateZeebeModelerTemplate(element, newTemplate) {
-    const modeling = this._modeling;
-
-    modeling.updateProperties(element, {
-      'zeebe:modelerTemplate': newTemplate && newTemplate.id,
-      'zeebe:modelerTemplateVersion': newTemplate && newTemplate.version
-    });
-  }
-
-  _updateZeebeModelerTemplateIcon(element, newTemplate) {
-    const modeling = this._modeling;
-
-    const icon = newTemplate && newTemplate.icon;
-
-
-    modeling.updateProperties(element, {
-      'zeebe:modelerTemplateIcon': icon && icon.contents
-    });
-  }
-
-  _updateProperties(element, oldTemplate, newTemplate) {
+  _updateProperties(element, oldTemplate, newTemplate, options) {
     const commandStack = this._commandStack;
 
     const newProperties = newTemplate.properties.filter((newProperty) => {
@@ -143,7 +102,8 @@ export default class ChangeElementTemplateHandler {
       commandStack.execute('element.updateModdleProperties', {
         element,
         moddleElement: businessObject,
-        properties
+        properties,
+        ...options
       });
     });
   }
@@ -156,7 +116,7 @@ export default class ChangeElementTemplateHandler {
    * @param {Object} oldTemplate
    * @param {Object} newTemplate
    */
-  _updateZeebeTaskDefinition(element, oldTemplate, newTemplate) {
+  _updateZeebeTaskDefinition(element, oldTemplate, newTemplate, options) {
     const bpmnFactory = this._bpmnFactory,
           commandStack = this._commandStack;
 
@@ -201,7 +161,8 @@ export default class ChangeElementTemplateHandler {
           commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: oldTaskDefinition,
-            properties
+            properties,
+            ...options
           });
         }
       }
@@ -221,7 +182,8 @@ export default class ChangeElementTemplateHandler {
           moddleElement: businessObject,
           properties: {
             values: [ ...businessObject.get('values'), newTaskDefinition ]
-          }
+          },
+          ...options
         });
       }
     });
@@ -235,10 +197,9 @@ export default class ChangeElementTemplateHandler {
    * @param {Object} oldTemplate
    * @param {Object} newTemplate
    */
-  _updateZeebeInputOutputParameterProperties(element, oldTemplate, newTemplate) {
+  _updateZeebeInputOutputParameterProperties(element, oldTemplate, newTemplate, options) {
     const bpmnFactory = this._bpmnFactory,
           commandStack = this._commandStack;
-
     const newProperties = newTemplate.properties.filter((newProperty) => {
       const newBinding = newProperty.binding,
             newBindingType = newBinding.type;
@@ -247,7 +208,6 @@ export default class ChangeElementTemplateHandler {
     });
 
     const businessObject = this._getOrCreateExtensionElements(element);
-
     let ioMapping = findExtension(businessObject, 'zeebe:IoMapping');
 
     // (1) remove old mappings if no new specified
@@ -261,7 +221,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: businessObject,
         properties: {
           values: without(businessObject.get('values'), ioMapping)
-        }
+        },
+        ...options
       });
     }
 
@@ -273,7 +234,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: businessObject,
         properties: {
           values: [ ...businessObject.get('values'), ioMapping ]
-        }
+        },
+        ...options
       });
     }
 
@@ -288,6 +250,7 @@ export default class ChangeElementTemplateHandler {
     let propertyName;
 
     newProperties.forEach((newProperty) => {
+
       const oldProperty = findOldProperty(oldTemplate, newProperty),
             inputOrOutput = findBusinessObject(businessObject, newProperty),
             newPropertyValue = newProperty.value,
@@ -296,6 +259,7 @@ export default class ChangeElementTemplateHandler {
 
       let newInputOrOutput,
           properties;
+      debugger;
 
       // (2) update old inputs and outputs
       if (inputOrOutput) {
@@ -330,13 +294,15 @@ export default class ChangeElementTemplateHandler {
           commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: inputOrOutput,
-            properties
+            properties,
+            ...options
           });
         }
       }
 
       // (3) add new inputs and outputs (unless optional)
       else if (shouldUpdate(newPropertyValue, newProperty)) {
+
         if (newBindingType === 'zeebe:input') {
           propertyName = 'inputParameters';
 
@@ -352,8 +318,10 @@ export default class ChangeElementTemplateHandler {
           moddleElement: ioMapping,
           properties: {
             [ propertyName ]: [ ...ioMapping.get(propertyName), newInputOrOutput ]
-          }
+          },
+          ...options
         });
+
       }
     });
 
@@ -364,7 +332,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: ioMapping,
         properties: {
           inputParameters: without(ioMapping.get('inputParameters'), inputParameter => oldInputs.includes(inputParameter))
-        }
+        },
+        ...options
       });
     }
 
@@ -374,7 +343,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: ioMapping,
         properties: {
           outputParameters: without(ioMapping.get('outputParameters'), outputParameter => oldOutputs.includes(outputParameter))
-        }
+        },
+        ...options
       });
     }
   }
@@ -387,7 +357,7 @@ export default class ChangeElementTemplateHandler {
    * @param {Object} oldTemplate
    * @param {Object} newTemplate
    */
-  _updateZeebeTaskHeaderProperties(element, oldTemplate, newTemplate) {
+  _updateZeebeTaskHeaderProperties(element, oldTemplate, newTemplate, options) {
     const bpmnFactory = this._bpmnFactory,
           commandStack = this._commandStack;
 
@@ -414,7 +384,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: businessObject,
         properties: {
           values: without(businessObject.get('values'), taskHeaders)
-        }
+        },
+        ...options
       });
     }
 
@@ -426,7 +397,8 @@ export default class ChangeElementTemplateHandler {
         moddleElement: businessObject,
         properties: {
           values: [ ...businessObject.get('values'), taskHeaders ]
-        }
+        },
+        ...options
       });
     }
 
@@ -451,7 +423,8 @@ export default class ChangeElementTemplateHandler {
           commandStack.execute('element.updateModdleProperties', {
             element,
             moddleElement: oldHeader,
-            properties
+            properties,
+            ...options
           });
         }
 
@@ -467,7 +440,8 @@ export default class ChangeElementTemplateHandler {
           moddleElement: taskHeaders,
           properties: {
             values: [ ...taskHeaders.get('values'), newHeader ]
-          }
+          },
+          ...options
         });
       }
     });
@@ -479,45 +453,23 @@ export default class ChangeElementTemplateHandler {
         moddleElement: taskHeaders,
         properties: {
           values: without(taskHeaders.get('values'), header => oldHeaders.includes(header))
-        }
+        },
+        ...options
       });
     }
   }
 
-  /**
-   * Replaces the element with the specified elementType
-   *
-   * @param {djs.model.Base} element
-   * @param {Object} newTemplate
-   */
-  _updateTaskType(element, newTemplate) {
-
-    // determine new task type
-    const newType = newTemplate.elementType;
-
-    if (!newType) {
-      return element;
-    }
-
-    // don't replace Task that is already the correct type
-    if (element.$type === newType.value) {
-      return element;
-    }
-
-    return this._bpmnReplace.replaceElement(element, { type: newType.value });
-  }
 }
 
-ChangeElementTemplateHandler.$inject = [
+ChangeElementTemplateHelper.$inject = [
   'bpmnFactory',
   'bpmnReplace',
   'commandStack',
-  'modeling',
-  'changeElementTemplateHelper'
+  'modeling'
 ];
 
 
-// helpers //////////
+// helpers /////////
 
 /**
  * Find business object matching specified property.
@@ -538,7 +490,6 @@ function findBusinessObject(element, property) {
   }
 
   if (bindingType === 'zeebe:input' || bindingType === 'zeebe:output') {
-
     const extensionElements = findExtension(businessObject, 'zeebe:IoMapping');
 
     if (!extensionElements) {
