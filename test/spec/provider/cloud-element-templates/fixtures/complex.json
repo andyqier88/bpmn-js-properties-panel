@@ -46,6 +46,7 @@
         }
       },
       {
+        "id": "http",
         "label": "REST Method",
         "description": "Specify the HTTP method to use.",
         "type": "Dropdown",
@@ -70,6 +71,10 @@
         "binding": {
           "type": "zeebe:input",
           "name": "body"
+        },
+        "condition":{
+          "property": "http",
+          "oneOf": ["post", "patch", "delete"]
         }
       },
       {
@@ -167,6 +172,7 @@
         }
       },
       {
+        "id": "restMethod",
         "label": "REST Method",
         "description": "Specify the HTTP method to use.",
         "type": "Dropdown",
@@ -400,6 +406,7 @@
         }
       },
       {
+        "id": "httpMethod",
         "label": "REST Method",
         "description": "Specify the HTTP method to use.",
         "group": "headers",
@@ -419,12 +426,16 @@
       {
         "label": "Request Body",
         "description": "Data to send to the endpoint.",
-        "value": "",
+        "value": "defualt value",
         "group": "payload",
         "type": "String",
         "binding": {
           "type": "zeebe:input",
           "name": "body"
+        },
+        "condition":{
+          "property": "httpMethod",
+          "oneOf": ["post", "patch", "delete"]
         }
       },
       {
@@ -615,6 +626,72 @@
         "value": "http",
         "binding": {
           "type": "zeebe:taskDefinition:type"
+        }
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+    "name": "Condition",
+    "id": "example.com.condition",
+    "description": "A conditional template.",
+    "appliesTo": [
+      "bpmn:Task"
+    ],
+    "properties": [
+      {
+        "id": "input1",
+        "label": "input 1",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:taskHeader",
+          "key": "url"
+        }
+      },
+      {
+        "id": "input2",
+        "label": "input 2",
+        "type": "Dropdown",
+        "value": "get",
+        "choices": [
+          { "name": "a", "value": "a" },
+          { "name": "b", "value": "b" },
+          { "name": "c", "value": "c" },
+          { "name": "d", "value": "d" }
+        ],
+        "binding": {
+          "type": "zeebe:taskHeader",
+          "key": "method"
+        },
+        "condition":{
+          "property": "input1",
+          "equals": "text"
+        }
+      },
+      {
+        "label": "input 3",
+        "value": "",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "body"
+        },
+        "condition":{
+          "property": "input2",
+          "oneOf": ["b", "c", "d"]
+        }
+      },
+      {
+        "label": "input 4",
+        "value": "default val",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:output",
+          "source": "= body"
+        },
+        "condition":{
+          "property": "input2",
+          "equals": "a"
         }
       }
     ]
