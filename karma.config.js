@@ -84,18 +84,19 @@ module.exports = function(karma) {
             test: /\.svg$/,
             use: [ 'react-svg-loader' ]
           }
-        ].concat(coverage ?
-          {
-            test: /\.js$/,
-            use: {
-              loader: 'istanbul-instrumenter-loader',
-              options: { esModules: true }
-            },
-            enforce: 'post',
-            include: /src\.*/,
-            exclude: /node_modules/
-          } : []
-        )
+        ]
+        // .concat(coverage ?
+        //   {
+        //     test: /\.js$/,
+        //     use: {
+        //       loader: 'istanbul-instrumenter-loader',
+        //       options: { esModules: true }
+        //     },
+        //     enforce: 'post',
+        //     include: /src\.*/,
+        //     exclude: /node_modules/
+        //   } : []
+        // )
       },
       plugins: [
         new DefinePlugin({
@@ -136,7 +137,8 @@ module.exports = function(karma) {
         alias: {
           'preact': '@bpmn-io/properties-panel/preact',
           'react': '@bpmn-io/properties-panel/preact/compat',
-          'react-dom': '@bpmn-io/properties-panel/preact/compat'
+          'react-dom': '@bpmn-io/properties-panel/preact/compat',
+          '@/api/camunda/list': false
         },
         modules: [
           'node_modules',

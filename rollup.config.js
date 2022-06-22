@@ -35,10 +35,13 @@ export default [
       {
         sourcemap: true,
         format: 'esm',
-        file: pkg.module
+        file: pkg.module,
+        paths: {
+          '@/api/camunda/list': '/@/api/camunda/list'
+        }
       }
     ],
-    external: externalDependencies(),
+    external: ['@/api/camunda/list',externalDependencies()],
     plugins: pgl([
       copy({
         targets: [
