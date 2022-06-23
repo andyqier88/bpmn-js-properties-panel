@@ -41,7 +41,7 @@ export default [
         }
       }
     ],
-    external: ['@/api/camunda/list',externalDependencies()],
+    external: externalDependencies(),
     plugins: pgl([
       copy({
         targets: [
