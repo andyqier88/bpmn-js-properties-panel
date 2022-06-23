@@ -1,6 +1,6 @@
 import { Group, ListGroup } from '@bpmn-io/properties-panel';
 
-import { findIndex } from 'min-dash';
+import { findIndex, forEach } from 'min-dash';
 
 import { mutate as arrayMove } from 'array-move';
 
@@ -102,13 +102,15 @@ const CAMUNDA_PLATFORM_GROUPS = [
  */
 export default class CamundaPlatformPropertiesProvider {
 
-  constructor(propertiesPanel, injector) {
+  constructor(propertiesPanel, injector, translate) {
     propertiesPanel.registerProvider(LOW_PRIORITY, this);
 
     this._injector = injector;
+    this._translate = translate;
   }
 
   getGroups(element) {
+    const translate = this._translate;
     return (groups) => {
 
       // (1) add Camunda Platform specific groups
@@ -122,7 +124,10 @@ export default class CamundaPlatformPropertiesProvider {
 
       // (3) move groups given specific priorities
       moveImplementationGroup(groups);
-
+      console.log(groups);
+      forEach(groups, function(group) {
+        group.label = translate(group.label)
+      });
       return groups;
     };
   }
@@ -135,7 +140,7 @@ export default class CamundaPlatformPropertiesProvider {
   }
 }
 
-CamundaPlatformPropertiesProvider.$inject = [ 'propertiesPanel', 'injector' ];
+CamundaPlatformPropertiesProvider.$inject = [ 'propertiesPanel', 'injector', 'translate' ];
 
 /**
  * This ensures the <Implementation> group always locates after <Documentation>

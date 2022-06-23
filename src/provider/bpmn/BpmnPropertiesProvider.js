@@ -1,5 +1,5 @@
 import { Group } from '@bpmn-io/properties-panel';
-
+import { forEach } from 'min-dash';
 import {
   CompensationProps,
   DocumentationProps,
@@ -206,17 +206,24 @@ function getGroups(element) {
 
 export default class BpmnPropertiesProvider {
 
-  constructor(propertiesPanel) {
+  constructor(propertiesPanel, translate) {
     propertiesPanel.registerProvider(this);
+    this._translate = translate;
   }
 
   getGroups(element) {
+    const translate = this._translate;
     return (groups) => {
       groups = groups.concat(getGroups(element));
+      
+      // debugger
+      forEach(groups, function(group) {
+        group.label = translate(group.label)
+      });
       return groups;
     };
   }
 
 }
 
-BpmnPropertiesProvider.$inject = [ 'propertiesPanel' ];
+BpmnPropertiesProvider.$inject = [ 'propertiesPanel', 'translate' ];
