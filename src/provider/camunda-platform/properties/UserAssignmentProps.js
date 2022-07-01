@@ -2,12 +2,16 @@ import {
   getBusinessObject,
   is
 } from 'bpmn-js/lib/util/ModelUtil';
-
-import { TextFieldEntry, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import {TextFieldEntry, isTextFieldEntryEdited, SelectEntry, isSelectEntryEdited } from '@bpmn-io/properties-panel';
+import MutiSelectEntry from './../customcom/entries/mutiselect';
+import CusTextFieldEntry from '../customcom/entries/DeptOrg';
 
 import {
   useService
 } from '../../../hooks';
+import { getRoleList, getUserList } from '@/api/camunda/list';
+
+import { useEffect, useMemo, useState, useRef } from "preact/hooks";
 
 /**
  * Cf. https://docs.camunda.org/manual/latest/reference/bpmn20/tasks/user-task/
@@ -25,7 +29,7 @@ export function UserAssignmentProps(props) {
     {
       id: 'assignee',
       component: Assignee,
-      isEdited: isTextFieldEntryEdited
+      isEdited: isSelectEntryEdited
     },
     {
       id: 'candidateGroups',
@@ -54,10 +58,47 @@ export function UserAssignmentProps(props) {
     }
   ];
 }
+export const EMPTY_OPTION = '';
+
 
 function Assignee(props) {
-  const { element } = props;
+  let [userOptions, setUserOptions] = useState([]); // 用户列表
+  const userOptionsRef = useRef(userOptions);
+  userOptionsRef.current = userOptions;
+  const getOptions = () => {
 
+    useEffect(() => {
+    // 用户列表
+    
+    // axios.get('/cpit/system/userList')
+    getUserList()
+      .then(function (res) {
+        // 处理成功情况
+        console.log(res);
+        res?.forEach((element) => {
+          userOptions.push({
+            label: element.nickName,
+            value: `U${element.userId}`,
+          });
+        });
+        setUserOptions([...userOptions]);
+      })
+      .catch(function (error) {
+        // 处理错误情况
+        console.log(error);
+      })
+      .then(function () {
+        // 总是会执行
+      });
+  }, []);
+  return userOptions
+  };
+  
+  // 修复多次循环
+  useEffect(() => {
+    userOptionsRef.current = userOptions;
+  });
+  const { element } = props;
   const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
@@ -78,30 +119,70 @@ function Assignee(props) {
     });
   };
 
-  return TextFieldEntry({
+  // console.log(businessObject, getValue());
+  return SelectEntry({
     element,
     id: 'assignee',
     label: translate('Assignee'),
     getValue,
     setValue,
-    debounce
+    debounce,
+    getOptions
   });
 }
 
 function CandidateUsers(props) {
-  const { element } = props;
+  let [roleOptions, setRoleOptions] = useState([]); // 角色列表
+  const roleOptionsRef = useRef(roleOptions);
+  roleOptionsRef.current = roleOptions;
+  const getOptions = () => {
 
+    useEffect(() => {
+    // 角色列表
+    
+    // axios.get('/cpit/system/roleList')
+    
+    getRoleList()
+      .then(function (res) {
+        // 处理成功情况
+        console.log(res);
+        res?.forEach((element) => {
+          roleOptions.push({
+            label: element.roleName,
+            value: element.roleId,
+          });
+        });
+        setRoleOptions([...roleOptions]);
+      })
+      .catch(function (error) {
+        // 处理错误情况
+        console.log(error);
+      })
+      .then(function () {
+        // 总是会执行
+      });
+  }, []);
+  return roleOptions
+  };
+  
+  // 修复多次循环
+  useEffect(() => {
+    roleOptionsRef.current = roleOptions;
+  });
+  const { element } = props;
   const commandStack = useService('commandStack');
   const translate = useService('translate');
-  const debounce = useService('debounceInput');
+
+  // const debounce = useService('debounceInput');
 
   const businessObject = getBusinessObject(element);
 
   const getValue = () => {
     return businessObject.get('camunda:candidateUsers');
   };
-
+  console.log('getValue',getValue())
   const setValue = (value) => {
+    console.log('setvalue', value)
     commandStack.execute('element.updateModdleProperties', {
       element,
       moddleElement: businessObject,
@@ -111,13 +192,13 @@ function CandidateUsers(props) {
     });
   };
 
-  return TextFieldEntry({
+  return MutiSelectEntry({
     element,
     id: 'candidateUsers',
     label: translate('Candidate users'),
     getValue,
     setValue,
-    debounce
+    getOptions,
   });
 }
 
@@ -144,13 +225,14 @@ function CandidateGroups(props) {
     });
   };
 
-  return TextFieldEntry({
+  return CusTextFieldEntry({
     element,
     id: 'candidateGroups',
     label: translate('Candidate groups'),
     getValue,
     setValue,
-    debounce
+    debounce,
+    // onFocus
   });
 }
 
