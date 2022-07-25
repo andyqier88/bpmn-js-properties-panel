@@ -112,10 +112,10 @@ export const PanelHeaderProvider = {
     }
 
     const concreteType = getConcreteType(element);
-
-    return concreteType
+    const translate = useService('translate');
+    return translate(concreteType
       .replace(/(\B[A-Z])/g, ' $1')
-      .replace(/(\bNon Interrupting)/g, '($1)');
+      .replace(/(\bNon Interrupting)/g, '($1)'));
   }
 };
 

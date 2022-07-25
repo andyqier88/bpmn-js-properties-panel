@@ -124,7 +124,8 @@ export default class CamundaPlatformPropertiesProvider {
 
       // (3) move groups given specific priorities
       moveImplementationGroup(groups);
-      console.log(groups);
+
+      // add Camunda Platform translate
       forEach(groups, function(group) {
         group.label = translate(group.label)
       });

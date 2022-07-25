@@ -1,5 +1,5 @@
 {
-  "name": "bpmn-js-properties-panel",
+  "name": "cpit-bpmn-js-panel",
   "version": "1.1.1",
   "description": "A simple properties panel for bpmn-js",
   "files": [
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bpmn-io/bpmn-js-properties-panel"
+    "url": "https://github.com/andyqier88/bpmn-js-properties-panel"
   },
   "keywords": [
     "bpmn-io",
@@ -37,8 +37,8 @@
   "module": "dist/index.esm.js",
   "umd:main": "dist/bpmn-js-properties-panel.umd.js",
   "author": {
-    "name": "Nico Rehwaldt",
-    "url": "https://github.com/nikku"
+    "name": "Dack Wang Nico Rehwaldt",
+    "url": "https://github.com/andyqier88"
   },
   "contributors": [
     {

@@ -18,7 +18,9 @@ const ID_REGEX = /^[a-z_][\w-.]*$/i;
 export function isIdValid(element, idValue, translate) {
   const assigned = element.$model.ids.assigned(idValue);
   const idAlreadyExists = assigned && assigned !== element;
-
+  // console.log(assigned, element);
+  // console.log(assigned !== element);
+  // debugger
   if (!idValue) {
     return translate('ID must not be empty.');
   }

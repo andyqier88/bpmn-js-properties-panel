@@ -1,0 +1,16 @@
+.relative{
+    position: relative
+}
+.bg{
+    position: absolute;
+    background: #fff;
+}
+.flex{
+    display: flex;
+}
+.flex1{
+    flex: 1;
+}
+.zindex9999 {
+    z-index: 99999;
+}
