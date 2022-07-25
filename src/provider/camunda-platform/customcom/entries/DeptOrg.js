@@ -7,16 +7,10 @@ import classnames from "classnames";
 
 import { isFunction } from "min-dash";
 import { usePrevious, useShowEntryEvent, useShowErrorEvent } from "../hooks";
-import Tree, { TreeNode } from "rc-tree";
-import Dialog from "rc-dialog";
-import Select, { Option } from "rc-select";
-
-import { getDeptTree, getPostList } from '@/api/camunda/list';
-
-import { getLastPostId, getMidDepId, getMidDepIdArray } from "../../utils/StringTrans";
 import Tree from "rc-tree";
 import Dialog from "rc-dialog";
 import Select, { Option } from "rc-select";
+
 import { getDeptTree, getPostList } from '@/api/camunda/list';
 
 import { getLastPostId, getMidDepIdArray } from "../../utils/StringTrans";
