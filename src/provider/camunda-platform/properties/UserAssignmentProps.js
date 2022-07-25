@@ -146,6 +146,7 @@ function CandidateUsers(props) {
     // 角色列表
     
     // axios.get('/cpit/system/roleList')
+    
     getRoleList()
       .then(function (res) {
         // 处理成功情况

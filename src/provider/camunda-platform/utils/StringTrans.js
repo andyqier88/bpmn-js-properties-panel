@@ -7,7 +7,7 @@ export function getMidDepIdArray(str) {
   let arr = str?.split(",")
   let temp = []
   arr?.forEach(element => {
-    temp.push(Number(getMidDepId(element)))
+    temp.push(getMidDepId(element))
   });
   return temp;
 }

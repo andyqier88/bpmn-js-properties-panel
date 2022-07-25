@@ -14,6 +14,12 @@ import Select, { Option } from "rc-select";
 import { getDeptTree, getPostList } from '@/api/camunda/list';
 
 import { getLastPostId, getMidDepId, getMidDepIdArray } from "../../utils/StringTrans";
+import Tree from "rc-tree";
+import Dialog from "rc-dialog";
+import Select, { Option } from "rc-select";
+import { getDeptTree, getPostList } from '@/api/camunda/list';
+
+import { getLastPostId, getMidDepIdArray } from "../../utils/StringTrans";
 const noop = () => {};
 
 
@@ -48,7 +54,7 @@ function TreeTiggle(props) {
     // debugger
     // console.log(compactVal)
     
-    orgTreeVal.forEach((item) => {
+    orgTreeVal.length&&orgTreeVal.forEach((item) => {
       temp.push(`D${item}P${val.value}`);
     });
     orgTreeVal.length && setCompactVal(temp);
@@ -61,6 +67,8 @@ function TreeTiggle(props) {
     console.log(getMidDepIdArray(props.value));
     // debugger
     // axios.get('/cpit/system/postList')
+    
+  
     getPostList()
     .then(function (res) {
       // 处理成功情况
@@ -86,6 +94,7 @@ function TreeTiggle(props) {
     .then(function () {
       // 总是会执行
     });
+    
     getDeptTree()
       .then(function (res) {
         // 处理成功情况
@@ -119,6 +128,10 @@ function TreeTiggle(props) {
   // 确定
   function sureSubmit() {
     console.log(compactVal);
+    if(!val.value|| !orgTreeVal.length){
+      alert('部门或岗位不能为空')
+      return 
+    }
     // return
     props.setValue(compactVal.join())
     props.onClose()
@@ -157,11 +170,11 @@ function TreeTiggle(props) {
           {/* {orgTreeVal}
           {'--'}*/}
           {/* {getMidDepIdArray(props.value)} */}
+          <span>选择部门</span>
           <Tree
             checkable
             multiple={true}
-            defaultExpandAll
-            defaultExpandedKeys={[134,126]}
+            defaultExpandAll={true}
             checkStrictly
             checkedKeys={{ checked: Array.from(new Set([...orgTreeVal,...getMidDepIdArray(props.value)])), halfChecked: [props.value] }}
             
@@ -176,6 +189,7 @@ function TreeTiggle(props) {
         </div>
 
         <div className="flex1">
+        <span>选择岗位</span>
           <Select
             ref={useShowEntryEvent(noop)}
             class="rc-select"
