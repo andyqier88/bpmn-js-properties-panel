@@ -10,9 +10,10 @@ import CusTextFieldEntry from '../customcom/entries/DeptOrg';
 import {
   useService
 } from '../../../hooks';
-import { getRoleList, getUserList } from '@/api/camunda/list';
+import { getUserList } from '@/api/camunda/list';
+// import { getUserList } from './../customcom/entries/mock';
 
-import { useEffect, useMemo, useState, useRef } from "preact/hooks";
+import { useEffect, useState, useRef } from "preact/hooks";
 
 /**
  * Cf. https://docs.camunda.org/manual/latest/reference/bpmn20/tasks/user-task/
@@ -137,9 +138,9 @@ function Assignee(props) {
 }
 
 function CandidateUsers(props) {
-  let [roleOptions, setRoleOptions] = useState([]); // 角色列表
-  const roleOptionsRef = useRef(roleOptions);
-  roleOptionsRef.current = roleOptions;
+  let [mutiUserOptions, setMutiUserOptions] = useState([]); // 多用户列表
+  const roleOptionsRef = useRef(mutiUserOptions);
+  roleOptionsRef.current = mutiUserOptions;
   const getOptions = () => {
 
     useEffect(() => {
@@ -147,17 +148,21 @@ function CandidateUsers(props) {
     
     // axios.get('/cpit/system/roleList')
     
-    getRoleList()
+    getUserList()
       .then(function (res) {
         // 处理成功情况
         console.log(res);
         res?.forEach((element) => {
-          roleOptions.push({
-            label: element.roleName,
-            value: element.roleId,
+          mutiUserOptions.push({
+            label: element.nickName,
+            value: element.userId,
           });
         });
-        setRoleOptions([...roleOptions]);
+        mutiUserOptions.unshift({
+          label: '请选择',
+          value: '',
+        })
+        setMutiUserOptions([...mutiUserOptions]);
       })
       .catch(function (error) {
         // 处理错误情况
@@ -167,12 +172,12 @@ function CandidateUsers(props) {
         // 总是会执行
       });
   }, []);
-  return roleOptions
+  return mutiUserOptions
   };
   
   // 修复多次循环
   useEffect(() => {
-    roleOptionsRef.current = roleOptions;
+    roleOptionsRef.current = mutiUserOptions;
   });
   const { element } = props;
   const commandStack = useService('commandStack');

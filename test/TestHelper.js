@@ -84,6 +84,22 @@ export function clickInput(input) {
 
 export function insertCoreStyles() {
   insertCSS(
+    'index.css',
+    require('../assets/index.css').default
+  );
+  insertCSS(
+    'select.css',
+    require('../assets/select.css').default
+  );
+  insertCSS(
+    'tree.css',
+    require('../assets/tree.css').default
+  );
+  insertCSS(
+    'dialog.css',
+    require('../assets/dialog.css').default
+  );
+  insertCSS(
     'properties-panel.css',
     require('@bpmn-io/properties-panel/assets/properties-panel.css').default
   );
@@ -93,11 +109,7 @@ export function insertCoreStyles() {
     require('../assets/element-templates.css').default
   );
 
-  insertCSS(
-    'test.css',
-    require('./test.css').default
-  );
-
+  
   insertCSS(
     'element-template-chooser.css',
     require('@bpmn-io/element-template-chooser/dist/element-template-chooser.css').default

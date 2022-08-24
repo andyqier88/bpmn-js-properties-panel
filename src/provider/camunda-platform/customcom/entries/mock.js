@@ -87,7 +87,7 @@ let userList = [
     {
         "userId": "3d464b4ea0d2491aab8a7bde74c57e95",
         "nickName": "张三",
-        "phonenumber": "15210510887",
+        "phonenumber": "",
         "roleIds": [
             "ee8626f80f7c2619917b6236f3a7f02b"
         ],
@@ -104,8 +104,8 @@ let userList = [
     },
     {
         "userId": "a75d45a015c44384a04449ee80dc3503",
-        "nickName": "jeecg",
-        "phonenumber": "15210510778",
+        "nickName": "8ui0",
+        "phonenumber": "",
         "roleIds": [
             "ee8626f80f7c2619917b6236f3a7f02b"
         ],
@@ -123,8 +123,8 @@ let userList = [
     {
         "userId": "e9ca23d68d884d4ebb19d07889727dae",
         "nickName": "管理员",
-        "email": "jeecg@163.com",
-        "phonenumber": "18611111111",
+        "email": "",
+        "phonenumber": "",
         "roleIds": [
             "1501570619841810433",
             "f6817f48af4fb3af11b9e8bf182f618b"
@@ -148,7 +148,7 @@ let userList = [
     {
         "userId": "1538812718676787202",
         "nickName": "t1",
-        "phonenumber": "15210510668",
+        "phonenumber": "",
         "roleIds": [
             "f6817f48af4fb3af11b9e8bf182f618b"
         ],
@@ -167,8 +167,8 @@ let userList = [
     },
     {
         "userId": "f0019fdebedb443c98dcb17d88222c38",
-        "nickName": "张小红",
-        "phonenumber": "15210510889",
+        "nickName": "小红",
+        "phonenumber": "",
         "roleIds": [
             "ee8626f80f7c2619917b6236f3a7f02b"
         ],
@@ -184,7 +184,59 @@ let userList = [
         "deptCharge": []
     }
 ]
-  
+let decisionId ={
+    records: [
+        {
+            "id": "Decision_13fhbho:2:04b68a8b-2349-11ed-ac0f-ca1d20814063",
+            "name": "a",
+            "key": "Decision_13fhbho",
+            "category": "http://camunda.org/schema/1.0/dmn",
+            "version": 2,
+            "deploymentId": "04a832a7-2349-11ed-ac0f-ca1d20814063"
+        },
+        {
+            "id": "Decision_19u1rq0:2:04b4dcda-2349-11ed-ac0f-ca1d20814063",
+            "name": "b",
+            "key": "Decision_19u1rq0",
+            "category": "http://camunda.org/schema/1.0/dmn",
+            "version": 2,
+            "deploymentId": "04a832a7-2349-11ed-ac0f-ca1d20814063"
+        },
+        {
+            "id": "Decision_400679:2:04b8112c-2349-11ed-ac0f-ca1d20814063",
+            "name": "食物决策A",
+            "key": "Decision_400679",
+            "category": "http://camunda.org/schema/1.0/dmn",
+            "version": 2,
+            "deploymentId": "04a832a7-2349-11ed-ac0f-ca1d20814063"
+        },
+        {
+            "id": "Decision_28efc0:1:d1d5d7b5-194a-11ed-8bd7-086ac52056d3",
+            "name": "gdfgfdgfd",
+            "key": "Decision_28efc0",
+            "category": "http://camunda.org/schema/1.0/dmn",
+            "version": 1,
+            "deploymentId": "d1c84322-194a-11ed-8bd7-086ac52056d3"
+        }
+    ]
+} 
+export function getDeptTree(){
+    return new Promise((reslove)=>{
+        reslove(DetTree) 
+    })
+}
+export function getPostList(){
+    return new Promise((reslove)=>{reslove(postList) })
+}
+export function getRoleList(){
+    return new Promise((reslove)=>{reslove(roleList) })
+}
+export function getUserList(){
+    return new Promise((reslove)=>{reslove(userList) })
+}
+export function decisionList(){
+    return new Promise((reslove)=>{reslove(decisionId) })
+}
 //   userList.forEach((element) => {
 //     userOptions.push({
 //       label: element.nickName,

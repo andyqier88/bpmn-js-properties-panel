@@ -12,7 +12,9 @@ import {
 import {
   useService
 } from '../../../hooks';
-
+import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { decisionList } from '@/api/camunda/list';
+// import { decisionList } from './../customcom/entries/mock';
 import {
   getImplementationType
 } from '../utils/ImplementationTypeUtils';
@@ -35,7 +37,8 @@ export function DmnImplementationProps(props) {
   entries.push({
     id: 'decisionRef',
     component: DecisionRef,
-    isEdited: isTextFieldEntryEdited
+    isEdited: isSelectEntryEdited,
+    
   });
 
 
@@ -113,6 +116,69 @@ function DecisionRef(props) {
     });
   };
 
+  // const getOptions = () => {
+
+  //   const options = [
+  //     { value: 'deployment', label: translate('deployment') },
+  //     { value: 'latest', label: translate('latest') },
+  //     { value: 'version', label: translate('version') },
+  //     { value: 'versionTag', label: translate('versionTag') }
+  //   ];
+
+  //   return options;
+  // };
+  const [ spells, setSpells ] = useState([]);
+
+  useEffect(() => {
+    function fetchSpells() {
+      decisionList()
+      .then(function (res) {
+        // 处理成功情况
+        console.log(res);
+        let decisionId = []
+        res?.records.forEach((resp)=>{
+          decisionId.push({
+            label: resp.name,
+            value: resp.key,
+          })
+        })
+        setSpells([...decisionId]);
+      })
+      .catch(function (error) {
+        // 处理错误情况
+        console.log(error);
+      })
+      .then(function () {
+        // 总是会执行
+      });
+      // fetch('http://localhost:1234/spell')
+      //   .then(res => res.json())
+      //   .then(spellbook => {
+      //     setSpells(spellbook)
+      //   })
+      //   .catch(error => console.error(error));
+    }
+
+    fetchSpells();
+  }, [ setSpells ]);
+
+  const getOptions = () => {
+    return [
+      { label: '<none>', value: undefined },
+      ...spells.map(spell => ({
+        label: spell.label,
+        value: spell.value
+      }))
+    ];
+  }
+  return SelectEntry({
+    element,
+    id: 'decisionRef',
+    label: translate('Decision reference'),
+    getValue,
+    setValue,
+    getOptions
+  });
   return TextFieldEntry({
     element,
     id: 'decisionRef',

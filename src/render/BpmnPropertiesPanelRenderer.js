@@ -31,7 +31,7 @@ export default class BpmnPropertiesPanelRenderer {
     this._layoutConfig = layoutConfig;
     this._descriptionConfig = descriptionConfig;
 
-    this._container = domify('<div style="height: 100vh" class="bio-properties-panel-container" input-handle-modified-keys="y,z"></div>');
+    this._container = domify('<div style="height: 90vh" class="bio-properties-panel-container" input-handle-modified-keys="y,z"></div>');
 
     eventBus.on('diagram.init', () => {
       if (parent) {

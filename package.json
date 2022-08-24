@@ -60,8 +60,11 @@
     "rc-dialog": "^8.9.0",
     "rc-notification": "^5.0.0-alpha.9",
     "rc-select": "^14.1.5",
+    "rc-tabs": "^12.1.0-alpha.0",
     "rc-tree": "^5.6.5",
-    "semver-compare": "^1.0.0"
+    "semver-compare": "^1.0.0",
+    "style-loader": "^3.3.1",
+    "url-loader": "^4.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -84,7 +87,7 @@
     "chai": "^4.3.4",
     "copy-webpack-plugin": "^9.0.0",
     "cross-env": "^7.0.3",
-    "css-loader": "^5.2.6",
+    "css-loader": "^5.2.7",
     "diagram-js": "^8.1.1",
     "eslint": "^7.32.0",
     "eslint-plugin-bpmn-io": "^0.13.0",

@@ -54,7 +54,8 @@ console.log('props', props)
         onChange={ handleChange }
         value={ value }
         disabled={ disabled }
-        mode="multiple"
+        mode="tags"
+        tags={true}
         allowClear
       >
         {
@@ -63,7 +64,7 @@ console.log('props', props)
             return (
               <Option
                 key={ idx }
-                value={ `R${option.value}` }
+                value={ `U${option.value}` }
                 disabled={ option.disabled }>
                 { option.label }
               </Option>

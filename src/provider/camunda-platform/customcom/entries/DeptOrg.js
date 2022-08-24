@@ -9,11 +9,14 @@ import { isFunction } from "min-dash";
 import { usePrevious, useShowEntryEvent, useShowErrorEvent } from "../hooks";
 import Tree from "rc-tree";
 import Dialog from "rc-dialog";
+// import Tabs, { TabPane } from 'rc-tabs';
 import Select, { Option } from "rc-select";
 
 import { getDeptTree, getPostList } from '@/api/camunda/list';
+// import { getDeptTree, getPostList, getRoleList} from './mock';
 
 import { getLastPostId, getMidDepIdArray } from "../../utils/StringTrans";
+// import './assets/dialog.css';
 const noop = () => {};
 
 
@@ -57,7 +60,7 @@ function TreeTiggle(props) {
   }, [compactVal[compactVal.length-1],orgTreeVal[orgTreeVal.length-1],val.value]);
   useEffect(() => {
     // 岗位列表
-    console.log(props.value)
+    console.log(props.value, getPostList())
     console.log(getMidDepIdArray(props.value));
     // debugger
     // axios.get('/cpit/system/postList')
