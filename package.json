@@ -60,7 +60,7 @@
     "rc-dialog": "^8.9.0",
     "rc-notification": "^5.0.0-alpha.9",
     "rc-select": "^14.1.5",
-    "rc-tabs": "^12.1.0-alpha.0",
+    "rc-tabs": "^11.16.1",
     "rc-tree": "^5.6.5",
     "semver-compare": "^1.0.0",
     "style-loader": "^3.3.1",

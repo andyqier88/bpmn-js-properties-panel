@@ -85,7 +85,7 @@ function Assignee(props) {
         });
         userOptions.unshift({
           label: '请选择',
-          value: '',
+          value: undefined,
         })
         setUserOptions([...userOptions]);
       })
@@ -160,7 +160,7 @@ function CandidateUsers(props) {
         });
         mutiUserOptions.unshift({
           label: '请选择',
-          value: '',
+          value: undefined,
         })
         setMutiUserOptions([...mutiUserOptions]);
       })

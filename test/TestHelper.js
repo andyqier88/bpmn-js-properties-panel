@@ -88,6 +88,10 @@ export function insertCoreStyles() {
     require('../assets/index.css').default
   );
   insertCSS(
+    'rc-tabs.css',
+    require('../assets/rc-tabs.css').default
+  );
+  insertCSS(
     'select.css',
     require('../assets/select.css').default
   );
@@ -103,7 +107,10 @@ export function insertCoreStyles() {
     'properties-panel.css',
     require('@bpmn-io/properties-panel/assets/properties-panel.css').default
   );
-
+  insertCSS(
+    'test.css',
+    require('./test.css').default
+  )
   insertCSS(
     'element-templates.css',
     require('../assets/element-templates.css').default

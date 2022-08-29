@@ -9,74 +9,78 @@ import { isFunction } from "min-dash";
 import { usePrevious, useShowEntryEvent, useShowErrorEvent } from "../hooks";
 import Tree from "rc-tree";
 import Dialog from "rc-dialog";
-// import Tabs, { TabPane } from 'rc-tabs';
+import Tabs, { TabPane } from "rc-tabs";
 import Select, { Option } from "rc-select";
 
-import { getDeptTree, getPostList } from '@/api/camunda/list';
+import { getDeptTree, getPostList, getRoleList } from '@/api/camunda/list';
 // import { getDeptTree, getPostList, getRoleList} from './mock';
 
-import { getLastPostId, getMidDepIdArray } from "../../utils/StringTrans";
+import { getLastPostId, getMidDepIdArray, removeRole } from "../../utils/StringTrans";
 // import './assets/dialog.css';
 const noop = () => {};
 
-
 function TreeTiggle(props) {
-  // console.log("props", props);
-  let [val, setVal] = useState({label: '',value:null}); // 选中岗位
+  
+  let [postVal, setPostVal] = useState({label: '',value:null}); // 选中岗位
+  let [roleValue , setroleValue ] = useState([]); // 选中角色
   let [postOptions, setPostOptions] = useState([]); // 岗位列表
+  let [roleOptions, setRoleOptions] = useState([]); // 角色列表
   let [orgTreeData, setOrgTreeData] = useState([]); // 部门
   let [orgTreeVal, setOrgTreeVal] = useState(getMidDepIdArray(props.value) || []); // 选中部门
   let [compactVal, setCompactVal] = useState([]); // 部门-岗位组合
 
   const postOptionsRef = useRef(postOptions);
-  const valRef = useRef(val);
+  const valRef = useRef(postVal);
   const orgTreeDataRef = useRef(orgTreeData);
+  const roleRef = useRef(roleValue);
   // const orgTreeValRef = useRef(orgTreeVal);
+  
   const compactValRef = useRef(compactVal);
   // postOptionsRef.current = postOptions;
   // orgTreeDataRef.current = orgTreeData;
   // orgTreeValRef.current = orgTreeVal;
   // compactValRef.current = compactVal;
-  // valRef.current = val;
+  // valRef.current = postVal;
   
   const handleChange = (target, options) => {
-    console.log(target, options);
-    setVal(options);
-    // setCompactVal(`D${orgTreeVal}P${val.value}`);
-    // val && setCompactVal(`D${orgTreeVal}P${val}`);
-    // console.log(val)
+    setPostVal(options);
   };
+  const handleChangeRole = (target, options) => {
+    setroleValue(options);
+  };
+  
   useEffect(() => {
     let temp = [];
     // debugger
-    // console.log(compactVal)
-    
     orgTreeVal.length&&orgTreeVal.forEach((item) => {
-      temp.push(`D${item}P${val.value}`);
+      temp.push(`D${item}P${postVal.value}`);
     });
+    // debugger
+    // roleValue.length&&roleValue.forEach((item) => {
+    //   debugger
+    //   temp.push(`,R${item.value}`);
+    // })
     orgTreeVal.length && setCompactVal(temp);
     // 
-    console.log(orgTreeVal, compactVal,val);
-  }, [compactVal[compactVal.length-1],orgTreeVal[orgTreeVal.length-1],val.value]);
+    console.log(orgTreeVal, compactVal, postVal);
+  }, [compactVal[compactVal.length-1], orgTreeVal[orgTreeVal.length-1], postVal.value]);
   useEffect(() => {
     // 岗位列表
-    console.log(props.value, getPostList())
-    console.log(getMidDepIdArray(props.value));
+    console.log('岗位props.value',props.value)
+    
     // debugger
     // axios.get('/cpit/system/postList')
-    
-  
+    // 获取岗位
     getPostList()
     .then(function (res) {
       // 处理成功情况
-      console.log(res);
       res?.forEach((element) => {
         postOptions.push({
           label: element.postName,
           value: element.postId,
         });
-        if (getLastPostId(props.value?.split(",")[0]) == element.postId) {
-          setVal({
+        if (props.value && getLastPostId(props.value?.split(",")[0]) == element.postId) {
+          setPostVal({
             label: element.postName,
             value: element.postId,
           });
@@ -88,24 +92,53 @@ function TreeTiggle(props) {
       // 处理错误情况
       console.log(error);
     })
-    .then(function () {
-      // 总是会执行
-    });
-    
+    // 获取部门数据
     getDeptTree()
       .then(function (res) {
         // 处理成功情况
-        console.log(res);
         setOrgTreeData(res);
       })
       .catch(function (error) {
         // 处理错误情况
         console.log(error);
       })
-      .then(function () {
-        // 总是会执行
+      let rolePropsArr = []
+    // 角色列表
+    getRoleList()
+    .then(function (res) {
+      // 处理成功情况
+      res?.forEach((element) => {
+        roleOptions.push({
+          label: element.roleName,
+          value: element.roleId,
+          // value: `R${element.roleId}`,
+        });
+        // console.log('element.roleId', element.roleId, props);
+        setRoleOptions([...roleOptions]);
+        console.log('角色props.value: ',props.value);
+        let roleProps = props.value&&props.value.split(',')
+        
+        roleProps&&roleProps?.length && roleProps.forEach((item)=>{
+          // debugger
+          if(item.indexOf('R') == 0 && item == `R${element.roleId}`){
+            rolePropsArr.push({
+              label: element.roleName,
+              value: element.roleId,
+            })
+          }
+          setroleValue(rolePropsArr);
+        })
+        // setRoleOptions([...roleOptions]);
       });
-    
+      
+    })
+    .catch(function (error) {
+      // 处理错误情况
+      console.log(error);
+    })
+    .then(function () {
+      // 总是会执行
+    });
   }, []);
   // 修复多次循环
   useEffect(() => {
@@ -113,24 +146,39 @@ function TreeTiggle(props) {
     orgTreeDataRef.current = orgTreeData;
     // orgTreeValRef.current = orgTreeVal;
     compactValRef.current = compactVal;
-    valRef.current = val;
-    
-  }, [postOptions, orgTreeData, orgTreeVal, compactVal, val]);
+    // valRef.current = postVal;
+    roleRef.current = roleValue
+  }, [postOptions, orgTreeData, orgTreeVal, compactVal, postVal]);
   // 部门选择
 
   function onSelectDeptList(selectedKeys, e) {
     setOrgTreeVal(selectedKeys.checked)
-    console.log(selectedKeys.checked, e);
+    console.log(selectedKeys, e, orgTreeVal);
   }
   // 确定
   function sureSubmit() {
-    console.log(compactVal);
-    if(!val.value|| !orgTreeVal.length){
-      alert('部门或岗位不能为空')
-      return 
-    }
+    // if(roleValue.length || (!postVal.value|| !orgTreeVal.length)){
+    //   alert('角色、部门或岗位不能为空')
+    //   return 
+    // }
+    let roleTem = []
+    roleValue.length && roleValue.forEach((item)=>{
+      if(!postVal.value && !orgTreeVal.length){
+        roleTem.push(`R${item.value}`)
+        debugger
+      } else {
+        roleTem.push(`,R${item.value}`)
+        debugger
+        console.log(roleValue, roleTem,  compactVal.join() + roleTem.join());
+      }
+    })
     // return
-    props.setValue(compactVal.join())
+    // 去空字符
+    let sumVal = (compactVal.join() + roleTem.join()).split(',').filter(e => e).map(String)
+    props.setValue(sumVal.join(","))
+    console.log('compactVal.join() + roleTem.join():', sumVal.join(","));
+    debugger
+    // props.setroleValue(roleValue[0].value)
     props.onClose()
   }
   return (
@@ -142,7 +190,7 @@ function TreeTiggle(props) {
       animation="slide-fade"
       maskAnimation="fade"
       style={{ width: 900 }}
-      title={<div>部门-岗位</div>}
+      title={<div>部门-岗位、角色</div>}
       footer={[
         <button
           type="button"
@@ -162,58 +210,83 @@ function TreeTiggle(props) {
         </button>
       ]}
     >
-      <div className="flex">
-        <div className="flex1">
-          {/* {orgTreeVal}
-          {'--'}*/}
-          {/* {getMidDepIdArray(props.value)} */}
-          <span>选择部门</span>
-          <Tree
-            checkable
-            multiple={true}
-            defaultExpandAll={true}
-            checkStrictly
-            checkedKeys={{ checked: Array.from(new Set([...orgTreeVal,...getMidDepIdArray(props.value)])), halfChecked: [props.value] }}
-            
-            selectable={false}
-            // onSelect={onSelectDeptList}
-            onCheck={onSelectDeptList}
-            fieldNames={{key: 'id',title: 'label'}}
-            treeData={orgTreeData}
-          >
-            {/* {loop()} */}
-          </Tree>
-        </div>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="选择部门-岗位" key="1">
+            <div className="flex">
+            <div className="flex1">
+              <span>选择部门</span>
+              <Tree
+                checkable={true}
+                multiple={true}
+                defaultExpandAll={true}
+                checkStrictly
+                // ,...getMidDepIdArray(props.value)
+                checkedKeys={{ checked: Array.from(new Set([...orgTreeVal])) }}
+                selectable={false}
+                onCheck={onSelectDeptList}
+                fieldNames={{key: 'id',title: 'label'}}
+                treeData={orgTreeData}
+              >
+              </Tree>
+            </div>
 
-        <div className="flex1">
-        <span>选择岗位</span>
+            <div className="flex1">
+            <span>选择岗位</span>
+              <Select
+                ref={useShowEntryEvent(noop)}
+                class="rc-select"
+                dropdownStyle={{ zIndex: 9999999 }}
+                value={postVal}
+                disabled={false}
+                onChange={handleChange}
+                allowClear
+                options={postOptions}
+              >
+                {postOptions.map((option, idx) => {
+                  return (
+                    <Option
+                      key={idx}
+                      value={`P${option.value}`}
+                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </div>
+          </div>
+        </TabPane>
+        <TabPane tab="选择角色" key="2">
           <Select
-            ref={useShowEntryEvent(noop)}
-            class="rc-select"
-            dropdownStyle={{ zIndex: 9999999 }}
-            value={val}
-            disabled={false}
-            onChange={handleChange}
+            onChange={ handleChangeRole }
+            value={ roleValue }
+            options={roleOptions}
+            mode="tags"
+            tags={true}
             allowClear
-            options={postOptions}
           >
-            {postOptions.map((option, idx) => {
-              // debugger
-              return (
-                <Option
-                  key={idx}
-                  value={`P${option.value}`}
-                  disabled={option.disabled}
-                >
-                  {option.label}
-                </Option>
-              );
-            })}
+            {
+              roleOptions.map((option, idx) => {
+                return (
+                  <Option
+                    key={ idx }
+                    value={ option.value }>
+                    { option.label }
+                  </Option>
+                );
+              })
+            }
           </Select>
-        </div>
-      </div>
+        </TabPane>
+      </Tabs>
+      
     </Dialog>
   );
+}
+function tabCallback(key) {
+  console.log(key);
+  setTabValue(key)
 }
 function Textfield(props) {
   const {
@@ -254,8 +327,7 @@ function Textfield(props) {
         onInput={handleInput}
         onFocus={props.onFocus}
         onBlur={props.onBlur}
-        // value={value || ""}
-        value={'请选择'}
+        value={props.value ? '点击查看已选内容' : '请选择'}
       />
       {/* <button onClick={obj.isShow = true}>set</button> */}
     </div>
@@ -285,6 +357,8 @@ export default function CusTextFieldEntry(props) {
     label,
     getValue,
     setValue,
+    // setroleValue,
+    // roleValue,
     validate,
     show = noop,
   } = props;

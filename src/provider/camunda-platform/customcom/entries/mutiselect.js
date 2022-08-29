@@ -36,10 +36,10 @@ function PSelect(props) {
     disabled,
     show = noop
   } = props;
-console.log('props', props)
+// console.log('props', props)
   const ref = useShowEntryEvent(show);
   const handleChange = ( target, options ) => {
-    console.log(target, options);
+    // console.log(target, options);
     // debugger
     onChange(target);
   };
@@ -60,7 +60,7 @@ console.log('props', props)
       >
         {
           options.map((option, idx) => {
-            console.log('option', option, idx)
+            // console.log('option', option, idx)
             return (
               <Option
                 key={ idx }
@@ -105,7 +105,7 @@ export default function MutiSelectEntry(props) {
   
   let editvalue = value&&Array.isArray(value) ? value :  value&&value.split(',')
   // let value = [{label: "tony", value: "R126"},{label: "admin", value: "R1"}];
-  console.log('getValue',value, editvalue)
+  // console.log('getValue',value, editvalue)
   // debugger
   const options = getOptions(element);
   // const options = [{label: "tony", value: "126"}];
