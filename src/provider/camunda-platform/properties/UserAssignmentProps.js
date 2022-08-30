@@ -14,7 +14,8 @@ import { getUserList } from '@/api/camunda/list';
 // import { getUserList } from './../customcom/entries/mock';
 
 import { useEffect, useState, useRef } from "preact/hooks";
-
+let isDisabled = false;
+let isDisabledForAssignee = false;
 /**
  * Cf. https://docs.camunda.org/manual/latest/reference/bpmn20/tasks/user-task/
  */
@@ -123,6 +124,8 @@ function Assignee(props) {
         'camunda:assignee': !value ? undefined : value
       }
     });
+    // 和camunda:CandidateUsers || camunda:candidateGroups 互斥
+    isDisabled = !value ? false : true;
   };
 
   // console.log(businessObject, getValue());
@@ -133,7 +136,8 @@ function Assignee(props) {
     getValue,
     setValue,
     debounce,
-    getOptions
+    getOptions,
+    disabled: isDisabledForAssignee
   });
 }
 
@@ -145,9 +149,6 @@ function CandidateUsers(props) {
 
     useEffect(() => {
     // 角色列表
-    
-    // axios.get('/cpit/system/roleList')
-    
     getUserList()
       .then(function (res) {
         // 处理成功情况
@@ -200,6 +201,8 @@ function CandidateUsers(props) {
         'camunda:candidateUsers': !value ? undefined : value
       }
     });
+    // 和camunda:Assignee 互斥
+    isDisabledForAssignee = !value ? false : true
   };
 
   return MutiSelectEntry({
@@ -209,6 +212,7 @@ function CandidateUsers(props) {
     getValue,
     setValue,
     getOptions,
+    disabled: isDisabled
   });
 }
 
@@ -233,6 +237,8 @@ function CandidateGroups(props) {
         'camunda:candidateGroups': !value ? undefined : value
       }
     });
+    // 和camunda:Assignee 互斥
+    isDisabledForAssignee = !value ? false : true
   };
 
   return CusTextFieldEntry({
@@ -242,6 +248,7 @@ function CandidateGroups(props) {
     getValue,
     setValue,
     debounce,
+    disabled: isDisabled
     // onFocus
   });
 }

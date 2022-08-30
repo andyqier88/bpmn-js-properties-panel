@@ -43,7 +43,10 @@ function TreeTiggle(props) {
   // valRef.current = postVal;
   
   const handleChange = (target, options) => {
-    setPostVal(options);
+    setPostVal(options || {
+      label: '',
+      value: undefined,
+    });
   };
   const handleChangeRole = (target, options) => {
     setroleValue(options);
@@ -86,6 +89,10 @@ function TreeTiggle(props) {
           });
         }
       });
+      // postOptions.unshift({
+      //   label: '请选择',
+      //   value: undefined,
+      // })
       setPostOptions([...postOptions]);
     })
     .catch(function (error) {
@@ -161,6 +168,10 @@ function TreeTiggle(props) {
     //   alert('角色、部门或岗位不能为空')
     //   return 
     // }
+    if((postVal.value && !orgTreeVal.length) || (!postVal.value && orgTreeVal.length)){
+      alert('部门或岗位不能为空')
+      return
+    }
     let roleTem = []
     roleValue.length && roleValue.forEach((item)=>{
       if(!postVal.value && !orgTreeVal.length){
@@ -214,6 +225,7 @@ function TreeTiggle(props) {
             <div className="flex1">
               <span>选择部门</span>
               <Tree
+                key={orgTreeData?.[0]?.id}
                 checkable={true}
                 multiple={true}
                 defaultExpandAll={true}
@@ -320,7 +332,7 @@ function Textfield(props) {
         name={id}
         spellCheck="false"
         autoComplete="off"
-        disabled={disabled}
+        disabled={props.disabled}
         class="bio-properties-panel-input"
         onInput={handleInput}
         onFocus={props.onFocus}
@@ -427,7 +439,7 @@ export default function CusTextFieldEntry(props) {
     >
       <Textfield
         debounce={debounce}
-        disabled={disabled}
+        disabled={props.disabled}
         feel={feel}
         id={id}
         label={label}
