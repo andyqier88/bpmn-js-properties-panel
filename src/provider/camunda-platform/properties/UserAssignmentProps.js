@@ -120,7 +120,7 @@ function Assignee(props) {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:assignee': value
+        'camunda:assignee': !value ? undefined : value
       }
     });
   };
@@ -197,7 +197,7 @@ function CandidateUsers(props) {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:candidateUsers': value
+        'camunda:candidateUsers': !value ? undefined : value
       }
     });
   };
@@ -230,7 +230,7 @@ function CandidateGroups(props) {
       element,
       moddleElement: businessObject,
       properties: {
-        'camunda:candidateGroups': value
+        'camunda:candidateGroups': !value ? undefined : value
       }
     });
   };
