@@ -165,10 +165,8 @@ function TreeTiggle(props) {
     roleValue.length && roleValue.forEach((item)=>{
       if(!postVal.value && !orgTreeVal.length){
         roleTem.push(`R${item.value}`)
-        debugger
       } else {
         roleTem.push(`,R${item.value}`)
-        debugger
         console.log(roleValue, roleTem,  compactVal.join() + roleTem.join());
       }
     })
@@ -177,7 +175,7 @@ function TreeTiggle(props) {
     let sumVal = (compactVal.join() + roleTem.join()).split(',').filter(e => e).map(String)
     props.setValue(sumVal.join(","))
     console.log('compactVal.join() + roleTem.join():', sumVal.join(","));
-    debugger
+    // debugger
     // props.setroleValue(roleValue[0].value)
     props.onClose()
   }
